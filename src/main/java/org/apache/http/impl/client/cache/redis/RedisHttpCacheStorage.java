@@ -21,8 +21,12 @@ public class RedisHttpCacheStorage implements HttpCacheStorage {
 
 	JedisPool pool;
 	
+	public RedisHttpCacheStorage(final JedisPool pool) {
+		this.pool = pool;
+	}
+	
 	public RedisHttpCacheStorage(String host, int port) {
-		pool = new JedisPool(new JedisPoolConfig(), host, port);
+		this(new JedisPool(new JedisPoolConfig(), host, port));
 	}
 	
 	public void putEntry(String url, HttpCacheEntry entry) throws IOException {
