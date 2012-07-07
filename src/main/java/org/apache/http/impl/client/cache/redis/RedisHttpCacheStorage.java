@@ -19,10 +19,10 @@ import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisHttpCacheStorage implements HttpCacheStorage {
 
-	JedisPool pool;
+	JedisPool jedisPool;
 	
-	public RedisHttpCacheStorage(final JedisPool pool) {
-		this.pool = pool;
+	public RedisHttpCacheStorage(final JedisPool jedisPool) {
+		this.jedisPool = jedisPool;
 	}
 	
 	public RedisHttpCacheStorage(String host, int port) {
@@ -30,27 +30,27 @@ public class RedisHttpCacheStorage implements HttpCacheStorage {
 	}
 	
 	public void putEntry(String url, HttpCacheEntry entry) throws IOException {
-		Jedis jedis = pool.getResource();
+		Jedis jedis = jedisPool.getResource();
 		jedis.set(url.getBytes(), serializeEntry(entry));
-		pool.returnResource(jedis);
+		jedisPool.returnResource(jedis);
 	}
 
 	public HttpCacheEntry getEntry(String url) throws IOException {
-		Jedis jedis = pool.getResource();
+		Jedis jedis = jedisPool.getResource();
 		byte[] cacheEntryBytes = jedis.get(url.getBytes());
-		pool.returnResource(jedis);
+		jedisPool.returnResource(jedis);
 		return deserializeEntry(cacheEntryBytes);
 	}
 
 	public void removeEntry(String url) throws IOException {
-		Jedis jedis = pool.getResource();
+		Jedis jedis = jedisPool.getResource();
 		jedis.del(url.getBytes());
-		pool.returnResource(jedis);
+		jedisPool.returnResource(jedis);
 	}
 
 	public void updateEntry(String url, HttpCacheUpdateCallback callback)
 			throws IOException, HttpCacheUpdateException {
-		Jedis jedis = pool.getResource();
+		Jedis jedis = jedisPool.getResource();
 		
 		byte[] key = url.getBytes();
 		byte[] cacheEntryBytes = jedis.get(key);
@@ -60,7 +60,7 @@ public class RedisHttpCacheStorage implements HttpCacheStorage {
 		
 		jedis.set(key, serializeEntry(entry));
 		
-		pool.returnResource(jedis);
+		jedisPool.returnResource(jedis);
 	}
 	
 	protected byte[] serializeEntry(HttpCacheEntry entry) throws IOException{
@@ -98,7 +98,7 @@ public class RedisHttpCacheStorage implements HttpCacheStorage {
 	}
 	
 	public void shutdown() {
-		pool.destroy();
+		jedisPool.destroy();
 	}
 
 }
