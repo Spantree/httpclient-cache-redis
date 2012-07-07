@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.spantree.httpclient</groupId>
   <artifactId>httpclient-cached-redis</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <description>Redis-based httpclient cache backend</description>
   <dependencies>
     <dependency>
